@@ -1,10 +1,25 @@
 {
+  "name": "hunttechdash",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.20",
-    "axios": "^1.13.5",
-    "react-router-dom": "^7.13.0",
-    "recharts": "^3.7.0",
-    "tailwindcss": "^4.1.18",
-    "zustand": "^5.0.11"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.16.0",
+    "axios": "^1.5.0",
+    "@tanstack/react-query": "^4.35.0",
+    "zustand": "^4.4.0"
+  },
+  "devDependencies": {
+    "vite": "^4.4.9",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.2.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0"
   }
 }
