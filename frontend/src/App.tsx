@@ -1,18 +1,36 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { DashboardPage } from "@pages/DashboardPage/DashboardPage";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuthStore } from "@/app/store/auth.store";
 import { LoginPage } from "@pages/LoginPage/LoginPage";
+import { DashboardPage } from "@pages/DashboardPage/DashboardPage";
 
-export const App: React.FC = () => {
+export default function App() {
+  const token = useAuthStore((state) => state.token);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Страница логина */}
-        <Route path="/login" element={<LoginPage />} />
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          token ? <Navigate to="/dashboard" replace /> : <LoginPage />
+        }
+      />
 
-        {/* Dashboard */}
-        <Route path="/" element={<DashboardPage />} />
-      </Routes>
-    </BrowserRouter>
+      <Route
+        path="/dashboard"
+        element={
+          token ? <DashboardPage /> : <Navigate to="/login" replace />
+        }
+      />
+
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to={token ? "/dashboard" : "/login"}
+            replace
+          />
+        }
+      />
+    </Routes>
   );
-};
+}

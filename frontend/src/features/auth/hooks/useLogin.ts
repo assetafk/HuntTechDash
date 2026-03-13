@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '../api/auth.api';
-import { useAuthStore } from "@/App/store/auth.store";
+import { useAuthStore } from "@/app/store/auth.store";
 
 export const useLogin = () => {
     const setToken = useAuthStore((state) => state.setToken);
