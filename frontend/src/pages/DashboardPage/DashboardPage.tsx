@@ -1,8 +1,11 @@
 import { useMe } from "@/features/auth/hooks/useMe";
+import { useTransactions } from "@/features/transactions/hooks/useTransactions";
 import { Button } from "@/shared/api/ui/Button";
+import { Link } from "react-router-dom";
 
 export const DashboardPage = () => {
   const { data, isLoading } = useMe();
+  const { data: transactionsData } = useTransactions({ limit: 5, offset: 0 });
 
   const name = data?.name ?? "Guest";
   const initials =
@@ -22,6 +25,9 @@ export const DashboardPage = () => {
             <span>Overview</span>
             <span>●</span>
           </div>
+          <Link to="/transactions" className="app-nav-item">
+            <span>Transactions</span>
+          </Link>
           <div className="app-nav-item">
             <span>Analytics</span>
           </div>
@@ -71,9 +77,20 @@ export const DashboardPage = () => {
                 <div className="metric-trend">+0.8% vs вчера</div>
               </div>
               <div className="metric-card">
-                <div className="metric-label">Revenue</div>
-                <div className="metric-value">$ 23.4k</div>
-                <div className="metric-trend">+5.2% за 7 дней</div>
+                <div className="metric-label">Revenue (last 7 days)</div>
+                <div className="metric-value">
+                  {transactionsData
+                    ? `${transactionsData.items
+                        .filter((tx) => tx.type === "income")
+                        .reduce((sum, tx) => sum + Number(tx.amount), 0)
+                        .toFixed(2)} ${
+                        transactionsData.items[0]?.currency ?? "USD"
+                      }`
+                    : "—"}
+                </div>
+                <div className="metric-trend">
+                  На основе последних транзакций
+                </div>
               </div>
             </section>
 
@@ -86,20 +103,36 @@ export const DashboardPage = () => {
               </div>
 
               <div className="panel">
-                <div className="panel-title">Latest activity</div>
+                <div className="panel-title">
+                  Latest transactions
+                  <Link
+                    to="/transactions"
+                    className="panel-link"
+                    style={{ marginLeft: "auto" }}
+                  >
+                    Показать все
+                  </Link>
+                </div>
                 <div className="activity-list">
-                  <div className="activity-item">
-                    <span>Новый пользователь зарегистрировался</span>
-                    <span className="activity-meta">2 мин назад</span>
-                  </div>
-                  <div className="activity-item">
-                    <span>Покупка Pro-подписки</span>
-                    <span className="activity-meta">18 мин назад</span>
-                  </div>
-                  <div className="activity-item">
-                    <span>Экспорт отчёта в CSV</span>
-                    <span className="activity-meta">1 час назад</span>
-                  </div>
+                  {!transactionsData || transactionsData.items.length === 0 ? (
+                    <div className="activity-item">
+                      <span>Пока нет транзакций</span>
+                    </div>
+                  ) : (
+                    transactionsData.items.map((tx) => (
+                      <div key={tx.id} className="activity-item">
+                        <span>
+                          {tx.type === "income" ? "Доход" : "Расход"} ·{" "}
+                          {tx.category ?? "Без категории"}
+                        </span>
+                        <span className="activity-meta">
+                          {new Date(tx.created_at).toLocaleString()} ·{" "}
+                          {tx.type === "expense" ? "-" : "+"}
+                          {tx.amount} {tx.currency}
+                        </span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </section>

@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import DateTime, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.db import base 
+from app.core.db import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -24,7 +25,7 @@ class User(Base):
         nullable=False,
     )
 
-    hashed_password: Mapped[str] = maped_column(
+    hashed_password: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
     )
@@ -33,4 +34,10 @@ class User(Base):
         DateTime,
         default=datetime.utcnow,
         nullable=False,
+    )
+
+    transactions = relationship(
+        "Transaction",
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
